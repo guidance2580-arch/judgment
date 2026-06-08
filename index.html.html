@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>직업 윤리 토론하기</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #3B82F6;
+    --ethical: #10B981;
+    --unethical: #EF4444;
+    --bg: #F0F4FF;
+    --card-bg: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .header-badge {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .header h1 {
+    font-size: clamp(22px, 5vw, 32px);
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  /* Name input */
+  .name-section {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .name-section label {
+    font-weight: 700;
+    font-size: 15px;
+    white-space: nowrap;
+    color: var(--text);
+  }
+
+  .name-section input {
+    flex: 1;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .name-section input:focus {
+    border-color: var(--primary);
+  }
+
+  /* Cases */
+  .cases-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .cases-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .case-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+    border: 2px solid transparent;
+    transition: border-color 0.25s, transform 0.2s;
+  }
+
+  .case-card.selected-ethical {
+    border-color: var(--ethical);
+  }
+
+  .case-card.selected-unethical {
+    border-color: var(--unethical);
+  }
+
+  .case-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .case-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .case-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-weight: 900;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .case-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .case-desc {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 18px;
+    background: #f8fafc;
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
+
+  /* Toggle buttons */
+  .toggle-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 11px 8px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: white;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    color: var(--muted);
+  }
+
+  .toggle-btn:hover {
+    transform: scale(1.02);
+  }
+
+  .toggle-btn.active-ethical {
+    background: var(--ethical);
+    border-color: var(--ethical);
+    color: white;
+  }
+
+  .toggle-btn.active-unethical {
+    background: var(--unethical);
+    border-color: var(--unethical);
+    color: white;
+  }
+
+  .toggle-btn .icon {
+    font-size: 17px;
+  }
+
+  /* Reason textarea */
+  .reason-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .case-card textarea {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 13.5px;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--text);
+    background: #fafcff;
+  }
+
+  .case-card textarea:focus {
+    border-color: var(--primary);
+    background: white;
+  }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 8px;
+  }
+
+  .status-badge.ethical {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  .status-badge.unethical {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  /* Submit */
+  .submit-section {
+    margin-top: 32px;
+    text-align: center;
+  }
+
+  .submit-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 16px 48px;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(59,130,246,0.4);
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(59,130,246,0.5);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  .submit-btn:disabled {
+    background: #94a3b8;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Progress */
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 20px;
+    height: 8px;
+    margin: 16px 0 8px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #6366f1);
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-text {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+    text-align: center;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #1e293b;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    max-width: 90vw;
+    text-align: center;
+    white-space: pre-line;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast.success {
+    background: var(--ethical);
+  }
+
+  .toast.error {
+    background: var(--unethical);
+  }
+
+  /* Sheet url section */
+  .sheet-section {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+
+  .sheet-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .sheet-section p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .sheet-section input {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    color: var(--text);
+  }
+
+  .sheet-section input:focus {
+    border-color: var(--primary);
+  }
+
+  .sheet-section .hint {
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin-top: 6px;
+  }
+
+  .sheet-section .hint a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .copy-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .copy-btn {
+    padding: 8px 16px;
+    background: #f1f5f9;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text);
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+
+  .copy-btn:hover { background: #e2e8f0; }
+
+  .result-preview {
+    margin-top: 16px;
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 12.5px;
+    color: var(--muted);
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 160px;
+    overflow-y: auto;
+    display: none;
+    font-family: monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">📋 활동 2 · 교과서 52쪽</div>
+  <h1>직업 윤리 토론하기</h1>
+  <p>6가지 사례를 살펴보고 윤리적 판단을 내려보세요</p>
+</div>
+
+<!-- 학번 이름 입력 -->
+<div class="name-section">
+  <label>🔢 학번</label>
+  <input type="text" id="studentId" placeholder="예) 2024010" style="max-width:130px; flex:none;" />
+  <label style="margin-left:4px;">👤 이름</label>
+  <input type="text" id="studentName" placeholder="홍길동" />
+</div>
+
+<!-- 구글 시트 설정 (숨김) -->
+<div style="display:none;">
+  <input type="url" id="sheetUrl" value="https://script.google.com/macros/s/AKfycbw2C3qgScSO0mnZWR48hC2u6JWQP8gdHaSCi0EHOnvR5UY1jToy__l1BJtQfP-0Xdem/exec" />
+</div>
+
+<!-- 진행도 -->
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progressBar" style="width:0%"></div>
+</div>
+<div class="progress-text" id="progressText">0 / 6 완료</div>
+
+<!-- 사례 카드들 -->
+<div class="cases-grid" id="casesGrid"></div>
+
+<!-- 제출 버튼 -->
+<div class="submit-section">
+  <button class="submit-btn" id="submitBtn" onclick="submitAnswers()">
+    ✅ 제출하기
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Apps Script 설명 모달 -->
+<div id="scriptModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:16px;">
+  <div style="background:white; border-radius:20px; max-width:520px; width:100%; max-height:90vh; overflow-y:auto; padding:28px 24px; position:relative;">
+    <button onclick="closeScriptModal()" style="position:absolute; top:16px; right:16px; background:#f1f5f9; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; color:#64748b;">×</button>
+    <h2 style="font-size:17px; font-weight:900; margin-bottom:16px;">📌 구글 Apps Script 설정 방법</h2>
+    <ol style="font-size:13.5px; line-height:1.9; color:#334155; padding-left:20px; margin-bottom:18px;">
+      <li>결과를 모을 <b>구글 스프레드시트</b>를 새로 만드세요.</li>
+      <li>상단 메뉴 → <b>확장 프로그램</b> → <b>Apps Script</b> 클릭</li>
+      <li>기존 코드를 모두 지우고, 아래 코드를 붙여넣은 뒤 <b>저장(💾)</b>하세요.</li>
+    </ol>
+    <div style="margin-bottom:18px;">
+      <pre id="scriptCode" style="background:#0f172a; color:#e2e8f0; border-radius:12px; padding:16px; font-size:12px; line-height:1.7; overflow-x:auto; white-space:pre-wrap; word-break:break-all; user-select:all;">function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var payload = JSON.parse(e.parameter.data);
+  var header = payload.header;
+  var row = payload.row;
+
+  // 헤더가 없으면 1행에 자동 추가
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(header);
+  }
+
+  // 학생 데이터를 한 행으로 추가
+  sheet.appendRow(row);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ result: 'OK' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+      <button id="copyCodeBtn" onclick="copyScriptCode()" style="margin-top:8px; width:100%; padding:11px; background:#f1f5f9; border:2px solid #e2e8f0; border-radius:10px; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer;">📋 코드 복사</button>
+    </div>
+    <ol start="4" style="font-size:13.5px; line-height:1.9; color:#334155; padding-left:20px;">
+      <li>상단 <b>배포</b> → <b>새 배포</b> 클릭</li>
+      <li>유형: <b>웹 앱</b> 선택, 액세스: <b>모든 사용자</b>로 설정 후 배포</li>
+      <li>생성된 <b>웹앱 URL</b>을 복사해서 앱의 입력창에 붙여넣으세요.</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+const cases = [
+  {
+    num: 1,
+    title: "사례 ①",
+    desc: "공장 폐수 정화 비용을 아끼려고 폐수를 강에 몰래 버린 공장장"
+  },
+  {
+    num: 2,
+    title: "사례 ②",
+    desc: "형편이 어려운 이웃들의 난방 문제를 해결하고자 저렴한 실내 사용 난방 텐트를 개발한 발명가"
+  },
+  {
+    num: 3,
+    title: "사례 ③",
+    desc: "한 달에 하루 사용할 수 있는 여성 보건 휴가를 내고 여행을 간 여직원"
+  },
+  {
+    num: 4,
+    title: "사례 ④",
+    desc: "일반 초콜릿보다 가격이 비싼 공정 무역 초콜릿으로 케이크를 만들어 판매하는 제빵사"
+  },
+  {
+    num: 5,
+    title: "사례 ⑤",
+    desc: "다니던 회사를 그만두고, 자기가 개발한 신기술을 경쟁 회사에 돈을 받고 알려 준 연구원"
+  },
+  {
+    num: 6,
+    title: "사례 ⑥",
+    desc: "근무하고 있는 식품 회사에서 소비 기한이 지난 상품의 날짜를 수정하여 다시 판매한다는 사실을 정부에 신고한 팀장"
+  }
+];
+
+let answers = {};
+
+function buildCards() {
+  const grid = document.getElementById('casesGrid');
+  grid.innerHTML = '';
+  cases.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'case-card';
+    card.id = `card-${c.num}`;
+    card.innerHTML = `
+      <div class="case-header">
+        <div class="case-num">${c.num}</div>
+        <div class="case-title">${c.title}</div>
+      </div>
+      <div class="case-desc">${c.desc}</div>
+      <div class="toggle-group">
+        <button class="toggle-btn" id="btn-ethical-${c.num}" onclick="selectOption(${c.num}, 'ethical')">
+          <span class="icon">⭕</span> 윤리적
+        </button>
+        <button class="toggle-btn" id="btn-unethical-${c.num}" onclick="selectOption(${c.num}, 'unethical')">
+          <span class="icon">❌</span> 비윤리적
+        </button>
+      </div>
+      <div class="reason-label">✏️ 선택한 이유를 적어보세요</div>
+      <textarea id="reason-${c.num}" placeholder="이유를 간단히 적어보세요..." oninput="saveReason(${c.num})"></textarea>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function selectOption(num, choice) {
+  if (!answers[num]) answers[num] = {};
+  answers[num].choice = choice;
+  
+  const ethBtn = document.getElementById(`btn-ethical-${num}`);
+  const uneBtn = document.getElementById(`btn-unethical-${num}`);
+  const card = document.getElementById(`card-${num}`);
+
+  ethBtn.className = 'toggle-btn' + (choice === 'ethical' ? ' active-ethical' : '');
+  uneBtn.className = 'toggle-btn' + (choice === 'unethical' ? ' active-unethical' : '');
+  card.className = 'case-card selected-' + choice;
+
+  updateProgress();
+}
+
+function saveReason(num) {
+  if (!answers[num]) answers[num] = {};
+  answers[num].reason = document.getElementById(`reason-${num}`).value;
+}
+
+function updateProgress() {
+  const done = Object.values(answers).filter(a => a.choice).length;
+  const pct = (done / 6) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${done} / 6 완료`;
+}
+
+function getResultData() {
+  const studentId = document.getElementById('studentId').value.trim();
+  const studentName = document.getElementById('studentName').value.trim();
+  const timestamp = new Date().toLocaleString('ko-KR');
+
+  // 헤더: 학번, 이름, 제출시간, 사례1판단, 사례1이유, ..., 사례6판단, 사례6이유
+  const header = ['학번', '이름', '제출시간'];
+  cases.forEach(c => {
+    header.push(`사례${c.num} 판단`);
+    header.push(`사례${c.num} 이유`);
+  });
+
+  // 데이터: 1행
+  const rowArr = [studentId || '(미입력)', studentName || '(미입력)', timestamp];
+  cases.forEach(c => {
+    const ans = answers[c.num] || {};
+    rowArr.push(ans.choice === 'ethical' ? '윤리적' : ans.choice === 'unethical' ? '비윤리적' : '(미선택)');
+    rowArr.push(ans.reason || '');
+  });
+
+  return {
+    studentId, studentName, timestamp,
+    header, rowArr
+  };
+}
+
+function previewResult() {
+  const { header, rowArr } = getResultData();
+  const preview = document.getElementById('resultPreview');
+  const lines = cases.map(c => {
+    const ans = answers[c.num] || {};
+    const judgment = ans.choice === 'ethical' ? '윤리적' : ans.choice === 'unethical' ? '비윤리적' : '(미선택)';
+    return `[사례 ${c.num}] ${judgment}\n  → ${ans.reason || '(이유 없음)'}`;
+  }).join('\n\n');
+  preview.textContent = lines;
+  preview.style.display = 'block';
+}
+
+function copyResult() {
+  const { header, rowArr } = getResultData();
+  const tsv = [header.join('\t'), rowArr.join('\t')].join('\n');
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(tsv).then(() => {
+      showToast('📋 결과가 복사되었습니다!\n구글 시트에 붙여넣기 하세요.', 'success');
+    }).catch(() => fallbackCopyTsv(tsv));
+  } else {
+    fallbackCopyTsv(tsv);
+  }
+}
+
+function fallbackCopyTsv(tsv) {
+  const ta = document.createElement('textarea');
+  ta.value = tsv;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try {
+    document.execCommand('copy');
+    showToast('📋 결과가 복사되었습니다!\n구글 시트에 붙여넣기 하세요.', 'success');
+  } catch(e) {
+    showToast('복사에 실패했습니다. 미리보기를 확인하세요.', 'error');
+  }
+  document.body.removeChild(ta);
+}
+
+async function submitAnswers() {
+  const studentId = document.getElementById('studentId').value.trim();
+  const studentName = document.getElementById('studentName').value.trim();
+  if (!studentId || !studentName) { showToast('⚠️ 학번과 이름을 모두 입력해주세요!', 'error'); return; }
+
+  const done = Object.values(answers).filter(a => a.choice).length;
+  if (done < 6) {
+    showToast(`⚠️ 아직 ${6 - done}개 사례를 선택하지 않았어요.`, 'error');
+    return;
+  }
+
+  const sheetUrl = document.getElementById('sheetUrl').value.trim();
+  const { header, rowArr } = getResultData();
+
+  if (!sheetUrl) {
+    copyResult();
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '제출 중...';
+
+  try {
+    const payload = { header, row: rowArr };
+    // GET + URL 파라미터 방식 — Apps Script no-cors 환경에서 가장 안정적
+    const params = new URLSearchParams({ data: JSON.stringify(payload) });
+    await fetch(`${sheetUrl}?${params.toString()}`, {
+      method: 'GET',
+      mode: 'no-cors'
+    });
+    showToast('🎉 제출 완료! 선생님께 전달되었습니다.', 'success');
+    btn.textContent = '✅ 제출 완료';
+  } catch(e) {
+    showToast('오류가 발생했습니다.\n결과 복사 버튼을 이용해주세요.', 'error');
+    btn.disabled = false;
+    btn.textContent = '✅ 제출하기';
+  }
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => { t.className = 'toast'; }, 3500);
+}
+
+function showScriptHelp() {
+  document.getElementById('scriptModal').style.display = 'flex';
+}
+
+function closeScriptModal() {
+  document.getElementById('scriptModal').style.display = 'none';
+}
+
+function copyScriptCode() {
+  const code = document.getElementById('scriptCode').textContent;
+  const btn = document.getElementById('copyCodeBtn');
+
+  // 방법 1: 최신 클립보드 API
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(() => {
+      showCopySuccess(btn);
+    }).catch(() => {
+      fallbackCopy(code, btn);
+    });
+  } else {
+    fallbackCopy(code, btn);
+  }
+}
+
+function fallbackCopy(code, btn) {
+  // 방법 2: textarea + execCommand (구형 브라우저 / iframe 환경)
+  const ta = document.createElement('textarea');
+  ta.value = code;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    const ok = document.execCommand('copy');
+    if (ok) {
+      showCopySuccess(btn);
+    } else {
+      showCopyFail(btn);
+    }
+  } catch(e) {
+    showCopyFail(btn);
+  }
+  document.body.removeChild(ta);
+}
+
+function showCopySuccess(btn) {
+  btn.textContent = '✅ 복사됨!';
+  btn.style.background = '#10B981';
+  btn.style.color = 'white';
+  setTimeout(() => {
+    btn.textContent = '📋 코드 복사';
+    btn.style.background = '';
+    btn.style.color = '';
+  }, 2500);
+}
+
+function showCopyFail(btn) {
+  btn.textContent = '⚠️ 복사 실패 — 코드를 직접 드래그하세요';
+  btn.style.background = '#EF4444';
+  btn.style.color = 'white';
+  // 코드 블록 전체 선택해서 드래그하기 쉽게
+  const el = document.getElementById('scriptCode');
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  setTimeout(() => {
+    btn.textContent = '📋 코드 복사';
+    btn.style.background = '';
+    btn.style.color = '';
+  }, 3000);
+}
+
+buildCards();
+</script>
+</body>
+</html>
